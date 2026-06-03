@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Varritech — Stateless MCP</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --indigo-deep: #0a0020;
+    --indigo-mid: #170e74;
+    --indigo-bright: #412e91;
+    --indigo-neon: #8c5af0;
+    --chartreuse: #96f01e;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 1200px; overflow: hidden; }
+  body {
+    font-family: 'Chakra Petch', sans-serif;
+    background: var(--indigo-deep);
+    color: var(--white);
+    position: relative;
+  }
+  /* freeform gradient blobs */
+  .blob {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.55;
+  }
+  .blob.a { width: 800px; height: 800px; background: var(--indigo-bright); top: -150px; right: -200px; }
+  .blob.b { width: 600px; height: 600px; background: var(--indigo-mid); bottom: -100px; left: -100px; opacity: 0.7; }
+  .blob.c { width: 350px; height: 350px; background: var(--chartreuse); bottom: 200px; right: 300px; opacity: 0.18; filter: blur(140px); }
+  /* scanlines */
+  .scanlines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 1px, rgba(0,0,0,0.25) 1px, rgba(0,0,0,0.25) 2px);
+    pointer-events: none;
+  }
+  /* vignette */
+  .vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%);
+    pointer-events: none;
+  }
+  /* bauhaus shapes */
+  .deco { position: absolute; opacity: 0.10; }
+  .deco svg { width: 100%; height: 100%; }
+  .deco.circle { top: 120px; left: 80px; width: 140px; height: 140px; }
+  .deco.cross { top: 220px; right: 90px; width: 90px; height: 90px; opacity: 0.13; }
+  .deco.dots { bottom: 380px; left: 60px; width: 160px; height: 160px; opacity: 0.15; }
+  .deco.half { top: 480px; right: 60px; width: 180px; height: 180px; opacity: 0.09; }
+
+  .frame { position: relative; z-index: 2; padding: 60px 70px; height: 100%; display: flex; flex-direction: column; }
+
+  /* logo bar */
+  .logo {
+    display: flex; align-items: center; gap: 14px;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-size: 22px;
+  }
+  .logo .mark {
+    width: 44px; height: 44px;
+    background-image: url('varritech-logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: invert(1) brightness(2);
+  }
+  /* headline */
+  .headline {
+    margin-top: 70px;
+    font-size: 78px; line-height: 0.98; font-weight: 700; letter-spacing: -1px;
+  }
+  .headline .strike {
+    text-decoration: line-through;
+    text-decoration-color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.45);
+    font-weight: 500;
+  }
+  .headline .neon { color: var(--chartreuse); }
+
+  /* stat pills */
+  .pills { display: flex; gap: 12px; margin-top: 40px; flex-wrap: wrap; }
+  .pill {
+    padding: 10px 18px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);
+    font-size: 16px; font-weight: 500; letter-spacing: 0.5px;
+    backdrop-filter: blur(20px);
+  }
+  .pill strong { color: var(--chartreuse); font-weight: 700; }
+
+  /* glass card */
+  .card {
+    margin-top: 40px;
+    padding: 30px 34px; border-radius: 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(20px);
+  }
+  .card h3 {
+    font-size: 20px; text-transform: uppercase; letter-spacing: 2px;
+    color: rgba(255,255,255,0.7); margin-bottom: 16px; font-weight: 600;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 32px; font-size: 22px; }
+  .row .k { color: rgba(255,255,255,0.55); }
+  .row .v { color: var(--white); font-weight: 600; }
+  .row .v.neon { color: var(--chartreuse); }
+
+  /* tags */
+  .tags { display: flex; gap: 10px; margin-top: 26px; flex-wrap: wrap; }
+  .tag {
+    font-size: 14px; padding: 6px 12px; border-radius: 6px;
+    background: rgba(140, 90, 240, 0.18); border: 1px solid rgba(140, 90, 240, 0.35);
+    color: rgba(255,255,255,0.9); letter-spacing: 0.5px;
+  }
+
+  /* bottom row */
+  .bottom {
+    margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .cta {
+    background: var(--chartreuse); color: #0a0020;
+    padding: 16px 28px; border-radius: 8px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+    font-size: 18px;
+  }
+  .tagline {
+    font-style: italic; opacity: 0.3; font-size: 16px; letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <div class="blob c"></div>
+
+  <div class="deco circle"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="none" stroke="white" stroke-width="1"/></svg></div>
+  <div class="deco cross"><svg viewBox="0 0 100 100"><line x1="50" y1="0" x2="50" y2="100" stroke="white" stroke-width="1"/><line x1="0" y1="50" x2="100" y2="50" stroke="white" stroke-width="1"/></svg></div>
+  <div class="deco dots"><svg viewBox="0 0 100 100">
+    <g fill="white">
+      <circle cx="10" cy="10" r="1.5"/><circle cx="30" cy="10" r="1.5"/><circle cx="50" cy="10" r="1.5"/><circle cx="70" cy="10" r="1.5"/><circle cx="90" cy="10" r="1.5"/>
+      <circle cx="10" cy="30" r="1.5"/><circle cx="30" cy="30" r="1.5"/><circle cx="50" cy="30" r="1.5"/><circle cx="70" cy="30" r="1.5"/><circle cx="90" cy="30" r="1.5"/>
+      <circle cx="10" cy="50" r="1.5"/><circle cx="30" cy="50" r="1.5"/><circle cx="50" cy="50" r="1.5"/><circle cx="70" cy="50" r="1.5"/><circle cx="90" cy="50" r="1.5"/>
+      <circle cx="10" cy="70" r="1.5"/><circle cx="30" cy="70" r="1.5"/><circle cx="50" cy="70" r="1.5"/><circle cx="70" cy="70" r="1.5"/><circle cx="90" cy="70" r="1.5"/>
+      <circle cx="10" cy="90" r="1.5"/><circle cx="30" cy="90" r="1.5"/><circle cx="50" cy="90" r="1.5"/><circle cx="70" cy="90" r="1.5"/><circle cx="90" cy="90" r="1.5"/>
+    </g>
+  </svg></div>
+  <div class="deco half"><svg viewBox="0 0 100 100"><path d="M 50 0 A 50 50 0 0 1 50 100 Z" fill="none" stroke="white" stroke-width="1"/></svg></div>
+
+  <div class="frame">
+    <div class="logo">
+      <div class="mark"></div>
+      <div>VARRITECH</div>
+    </div>
+
+    <div class="headline">
+      <span class="strike">Sticky sessions.</span><br>
+      <span class="strike">Redis state.</span><br>
+      Just <span class="neon">plain HTTP.</span>
+    </div>
+
+    <div class="pills">
+      <div class="pill"><strong>2026-07-28</strong> MCP spec RC</div>
+      <div class="pill">Round-robin LB <strong>✓</strong></div>
+      <div class="pill">Zero session store</div>
+    </div>
+
+    <div class="card">
+      <h3>Migration in one diff</h3>
+      <div class="row">
+        <div class="k">Mcp-Session-Id header</div><div class="v"><span class="strike" style="color:rgba(255,255,255,0.4);">required</span> → removed</div>
+        <div class="k">In-process session map</div><div class="v"><span class="strike" style="color:rgba(255,255,255,0.4);">required</span> → none</div>
+        <div class="k">Sticky load balancer</div><div class="v"><span class="strike" style="color:rgba(255,255,255,0.4);">required</span> → round-robin</div>
+        <div class="k">tools/list discovery</div><div class="v neon">cached client-side (ttlMs)</div>
+      </div>
+    </div>
+
+    <div class="tags">
+      <div class="tag">Node 22</div>
+      <div class="tag">TypeScript</div>
+      <div class="tag">Express</div>
+      <div class="tag">Vercel · Fly · Cloudflare Workers</div>
+      <div class="tag">MIT</div>
+    </div>
+
+    <div class="bottom">
+      <div class="cta">FORK THE REPO →</div>
+      <div class="tagline">Bold ideas wait for no one</div>
+    </div>
+  </div>
+
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+</body>
+</html>
